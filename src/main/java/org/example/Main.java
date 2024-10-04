@@ -17,9 +17,9 @@ public class Main {
                 System.out.println("0. Выйти");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
-                if(choice == 0) {
+                if (choice == 0) {
                     break;
-                } else if(choice == 1) {
+                } else if (choice == 1) {
                     System.out.println("Новая запись:");
                     System.out.println("Введите название книги");
                     String title = scanner.nextLine();
@@ -27,11 +27,12 @@ public class Main {
                     String author = scanner.nextLine();
                     System.out.println("Введите год");
                     int year = scanner.nextInt();
-                    add(connection,title,author,year);
+                    add(connection, title, author, year);
+                } else if (choice == 2) {
+                    showBoocks(connection);
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Ошибка: " + e.getMessage());
         }
@@ -46,7 +47,15 @@ public class Main {
         System.out.println("Запись успешно добавлена!");
     }
 
-//    static void showBoocks(Connection connection) throws SQLException{
-//        ResultSet rs = new ResultSet("SELECT * FROM Boocks");
-//    }
+    static void showBoocks(Connection connection) throws SQLException {
+        String selectSql = "SELECT * from Boocks";
+        ResultSet resultSet = connection.createStatement().executeQuery(selectSql);
+
+        while (resultSet.next()) {
+            System.out.println("ID - " + resultSet.getString(1)
+                    + " title - " + resultSet.getString(2)
+                    + " author - " + resultSet.getString(3)
+                    + " year - " + resultSet.getString(4));
+        }
+    }
 }
