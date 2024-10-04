@@ -30,6 +30,8 @@ public class Main {
                     add(connection, title, author, year);
                 } else if (choice == 2) {
                     showBoocks(connection);
+                } else if (choice == 3) {
+
                 }
             }
         } catch (SQLException e) {
