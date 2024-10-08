@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=BoockLibrary";
+        String url = "jdbc:sqlserver://localhost:1433;databaseName=BookLibrary";
         String user = "bk";
         String password = "bk";
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
@@ -42,7 +42,7 @@ public class Main {
     }
 
     static void add(Connection connection, String title, String author, int year) throws SQLException {
-        PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Boocks (title, author, year) VALUES ( ?, ?, ?)");
+        PreparedStatement pstmt = connection.prepareStatement("INSERT INTO Books (title, author, year) VALUES ( ?, ?, ?)");
         pstmt.setString(1, title);
         pstmt.setString(2, author);
         pstmt.setInt(3, year);
@@ -51,7 +51,7 @@ public class Main {
     }
 
     static void showBooks(Connection connection) throws SQLException {
-        String selectSql = "SELECT * from Boocks";
+        String selectSql = "SELECT * from Books";
         ResultSet resultSet = connection.createStatement().executeQuery(selectSql);
 
         while (resultSet.next()) {
@@ -66,10 +66,9 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Введите id книги");
         int id = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine();
 
-        // Получаем текущие данные книги
-        String selectQuery = "SELECT * FROM Boocks WHERE id = ?";
+        String selectQuery = "SELECT * FROM Books WHERE id = ?";
         PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
         selectStmt.setInt(1, id);
         ResultSet rs = selectStmt.executeQuery();
@@ -87,7 +86,7 @@ public class Main {
             System.out.println("Введите год:");
             int newYear = scanner.nextInt();
 
-            String updateQuery = "UPDATE Boocks SET title = ?, author = ?, year = ? WHERE id = ?";
+            String updateQuery = "UPDATE Books SET title = ?, author = ?, year = ? WHERE id = ?";
             PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
             updateStmt.setString(1, newTitle);
             updateStmt.setString(2, newAuthor);
