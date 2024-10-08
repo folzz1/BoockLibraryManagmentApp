@@ -1,5 +1,6 @@
 package org.example;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -15,6 +16,7 @@ public class Main {
                 System.out.println("1. Добавить книгу");
                 System.out.println("2. Показать книги");
                 System.out.println("3. Обновление данных о книге по id");
+                System.out.println("4. Удаление данных о книге по id");
                 System.out.println("0. Выйти");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -33,6 +35,8 @@ public class Main {
                     showBooks(connection);
                 } else if (choice == 3) {
                     updatingBookDataByID(connection);
+                } else if (choice == 4) {
+                    deletingBookDataByID(connection);
                 }
             }
         } catch (SQLException e) {
@@ -99,6 +103,28 @@ public class Main {
             } else {
                 System.out.println("\nОшибка при обновлении данных книги.");
             }
+        } else {
+            System.out.println("\nКнига с таким ID не найдена.");
+        }
+    }
+
+    static void deletingBookDataByID(Connection connection) throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите id книги");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        String selectQuery = "SELECT * FROM Books WHERE id = ?";
+        PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
+        selectStmt.setInt(1, id);
+        ResultSet rs = selectStmt.executeQuery();
+
+        if (rs.next()) {
+            String delQuery = "DELETE FROM Books WHERE id = ?";
+            PreparedStatement delStmt = connection.prepareStatement(delQuery);
+            delStmt.setInt(1,id);
+            delStmt.executeUpdate();
+            System.out.println("Данные удалены.");
         } else {
             System.out.println("\nКнига с таким ID не найдена.");
         }
