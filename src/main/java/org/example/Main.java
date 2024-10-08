@@ -14,6 +14,7 @@ public class Main {
                 System.out.println("\nВыберите действие:");
                 System.out.println("1. Добавить книгу");
                 System.out.println("2. Показать книги");
+                System.out.println("3. Обновление данных о книге по id");
                 System.out.println("0. Выйти");
                 int choice = scanner.nextInt();
                 scanner.nextLine();
@@ -29,9 +30,9 @@ public class Main {
                     int year = scanner.nextInt();
                     add(connection, title, author, year);
                 } else if (choice == 2) {
-                    showBoocks(connection);
+                    showBooks(connection);
                 } else if (choice == 3) {
-
+                    updatingBookDataByID(connection);
                 }
             }
         } catch (SQLException e) {
@@ -49,7 +50,7 @@ public class Main {
         System.out.println("Запись успешно добавлена!");
     }
 
-    static void showBoocks(Connection connection) throws SQLException {
+    static void showBooks(Connection connection) throws SQLException {
         String selectSql = "SELECT * from Boocks";
         ResultSet resultSet = connection.createStatement().executeQuery(selectSql);
 
@@ -58,6 +59,49 @@ public class Main {
                     + " title - " + resultSet.getString(2)
                     + " author - " + resultSet.getString(3)
                     + " year - " + resultSet.getString(4));
+        }
+    }
+
+    static void updatingBookDataByID(Connection connection) throws SQLException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите id книги");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        // Получаем текущие данные книги
+        String selectQuery = "SELECT * FROM Boocks WHERE id = ?";
+        PreparedStatement selectStmt = connection.prepareStatement(selectQuery);
+        selectStmt.setInt(1, id);
+        ResultSet rs = selectStmt.executeQuery();
+
+        if (rs.next()) {
+            System.out.println("\nТекущие данные книги:");
+            System.out.println("Название: " + rs.getString("title"));
+            System.out.println("Автор: " + rs.getString("author"));
+            System.out.println("Год: " + rs.getString("year"));
+
+            System.out.println("Введите название:");
+            String newTitle = scanner.nextLine();
+            System.out.println("Введите автора:");
+            String newAuthor = scanner.nextLine();
+            System.out.println("Введите год:");
+            int newYear = scanner.nextInt();
+
+            String updateQuery = "UPDATE Boocks SET title = ?, author = ?, year = ? WHERE id = ?";
+            PreparedStatement updateStmt = connection.prepareStatement(updateQuery);
+            updateStmt.setString(1, newTitle);
+            updateStmt.setString(2, newAuthor);
+            updateStmt.setInt(3, newYear);
+            updateStmt.setInt(4, id);
+
+            int rowsUpdated = updateStmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("\nДанные книги успешно обновлены.");
+            } else {
+                System.out.println("\nОшибка при обновлении данных книги.");
+            }
+        } else {
+            System.out.println("\nКнига с таким ID не найдена.");
         }
     }
 }
